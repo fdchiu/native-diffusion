@@ -43,10 +43,15 @@ public class Diffusion : ObservableObject {
         return await shared.generate(input: SampleInput(prompt: prompt))
     }
     
-    private var saveMemory = false
+    private var saveMemory = true //needed for ios
 
-    public init(saveMemoryButBeSlower: Bool = false) {
-        self.saveMemory = saveMemoryButBeSlower
+
+    public init(saveMemoryButBeSlower: Bool = false) { //false for mac
+#if os(iOS)
+        self.saveMemory = true
+#else
+        self.saveMemory = false
+#endif
         state.send(.notStarted)
     }
 

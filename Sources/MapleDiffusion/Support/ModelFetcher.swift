@@ -45,7 +45,7 @@ class ModelFetcher {
     
     
     private var bundleId : String {
-        Bundle.main.bundleIdentifier ?? "app.otato.diffusion"
+        Bundle.main.bundleIdentifier ?? "app.creata.diffusion"
     }
     
     var finalLocalUrl: URL {

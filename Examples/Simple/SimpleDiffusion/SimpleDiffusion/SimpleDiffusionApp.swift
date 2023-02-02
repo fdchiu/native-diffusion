@@ -13,6 +13,6 @@ struct SimpleDiffusionApp: App {
         WindowGroup {
             ContentView()
                 .ignoresSafeArea()
-        }.windowStyle(.hiddenTitleBar)
+        } //.windowStyle(.hiddenTitleBar)
     }
 }

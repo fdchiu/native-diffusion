@@ -72,7 +72,7 @@ public extension Diffusion {
                             negativePrompt: String = "",
                   inputImage: CGImage? = nil,
                             seed: Int = Int.random(in: 0...Int.max),
-                            steps:Int = 20,
+                            steps:Int = 30,
                             guidanceScale:Float = 7.5,
                             progress: ((GenResult) -> Void)? = nil,
                       remoteUrl: String? = nil

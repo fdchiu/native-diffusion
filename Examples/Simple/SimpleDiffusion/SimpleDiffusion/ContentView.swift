@@ -14,29 +14,47 @@ struct ContentView: View {
     // 1
     @StateObject var sd = Diffusion()
     @State var prompt = ""
-    @State var steps = 20
+    @State var steps = 30
     @State var guidance : Double = 7.5
     @State var image : CGImage?
     @State var inputImage: CGImage?
     @State var imagePublisher = Diffusion.placeholderPublisher
     @State var progress : Double = 0
+    @FocusState private var promptIsFocused: Bool
     
     var anyProgress : Double { sd.loadingProgress < 1 ? sd.loadingProgress : progress }
-
+    
     var body: some View {
         VStack {
-            DiffusionImage(image: $image, inputImage: $inputImage, progress: $progress)
-            Spacer()
+            Text("Diffusion").foregroundColor(.orange).bold().frame(alignment: Alignment.center)
             TextField("Prompt", text: $prompt)
-            // 3
+            //TextEditor( text: $prompt).lineLimit(4)
                 .onSubmit {
-                    let input = SampleInput(prompt: prompt,
+                    promptIsFocused = false
+                    create()
+                    /*let input = SampleInput(prompt: prompt,
                                             initImage: inputImage,
                                             steps: steps)
-                    self.imagePublisher = sd.generate(input: input)
-                    
+                    self.imagePublisher = sd.generate(input: input)*/
                 }
-                .disabled(!sd.isModelReady)
+                .disabled(!sd.isModelReady).focused($promptIsFocused)
+            Button(action: {
+                promptIsFocused = false
+                create()
+                /*let input = SampleInput(prompt: prompt,
+                                        initImage: inputImage,
+                                        steps: steps)
+                self.imagePublisher = sd.generate(input: input)*/
+            }) {
+                Text("Create")
+                    .frame(minWidth: 100, maxWidth: .infinity, minHeight: 32, alignment: .center)
+                    .background(!sd.isModelReady ? .gray : .blue)
+                    .foregroundColor(.white)
+                    .font(Font.title)
+                    .cornerRadius(32)
+            }.buttonStyle(.borderless).disabled(!sd.isModelReady)
+            Spacer()
+            DiffusionImage(image: $image, inputImage: $inputImage, progress: $progress)
             
             HStack {
                 TextField("Steps", value: $steps, formatter: NumberFormatter())
@@ -48,9 +66,12 @@ struct ContentView: View {
         }
         .task {
             // 2
-            let path = URL(string: "http://localhost:8080/Diffusion.zip")!
+            let path = URL(string: "http://localhost:8000/Diffusion.zip")!
+            let fp32: Bool = false
+            let fileUrl: URL = Bundle.main.url(forResource: "bins", withExtension: nil)!// + name + (fp32 ? "_fp32" : ""), withExtension: ".bin")!
             do {
-                try await sd.prepModels(remoteURL: path)
+                try await sd.prepModels(localUrl: fileUrl)
+                //try await sd.prepModels(remoteURL: path)
             } catch {
                 assertionFailure("Hi, developer. You most likely don't have a local webserver running that serves the zip file with the transformed model files. See README.md")
             }
@@ -62,6 +83,18 @@ struct ContentView: View {
             self.progress = r.progress
         }
         .frame(minWidth: 200, minHeight: 200)
+    }
+    
+    
+    func create() {
+        let input = SampleInput(prompt: prompt,
+                                initImage: inputImage
+                                /*seed: Int.random(in: 0...Int.max),
+                                steps: steps,
+                                guidanceScale: Float(guidance)*/
+        )
+        self.imagePublisher = sd.generate(input: input)
+        
     }
 }
 

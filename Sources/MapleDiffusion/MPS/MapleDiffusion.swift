@@ -148,6 +148,7 @@ class MapleDiffusion {
         scheduler: Scheduler,
         completion: @escaping (CGImage?, Float, String) -> ()
     ) {
+        print("\(input)")
         let guidanceScaleData = input.guidanceScale.tensorData(device: graphDevice)
         let actualTimesteps = scheduler.timesteps(strength: input.strength)
         for (index, timestep) in actualTimesteps.enumerated() {

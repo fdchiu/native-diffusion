@@ -101,12 +101,13 @@ class BPETokenizer {
     public func encode(s: String) -> [Int] {
         let ns = NSString(string: whitespaceClean(s: s.lowercased()))
         var bpe: [Int] = []
+        let MAXTOKEN = 75
         for match in pat.matches(in: String(ns), range: NSRange(location: 0, length: ns.length)) {
             bpe.append(contentsOf: encodeToken(s: ns.substring(with: match.range)))
         }
-        if (bpe.count > 75) {
+        if (bpe.count > MAXTOKEN) {
             print("Prompt of \(bpe.count) bpe tokens will be truncated: \(s)")
         }
-        return [49406] + bpe[..<min(75, bpe.count)] + [Int](repeating: 49407, count: max(1, 76 - bpe.count))
+        return [49406] + bpe[..<min(MAXTOKEN, bpe.count)] + [Int](repeating: 49407, count: max(1, MAXTOKEN - bpe.count))
     }
 }
