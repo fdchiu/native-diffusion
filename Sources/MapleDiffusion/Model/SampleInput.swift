@@ -40,7 +40,7 @@ public struct SampleInput {
         strength: Float = 0.75,
         seed: Int = Int.random(in: 0...Int.max),
         steps: Int = 30,
-        guidanceScale: Float = 9.0
+        guidanceScale: Float = 7.5
     ) {
         self.prompt = prompt
         self.negativePrompt = negativePrompt
